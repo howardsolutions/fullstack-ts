@@ -1,7 +1,4 @@
-## Fullstack TypeScript, v2 Course
-
-This is a companion repository for the [Fullstack TypeScript, v2](https://frontendmasters.com/courses/fullstack-typescript-v2) course on Frontend Masters.
-[![Frontend Masters](https://static.frontendmasters.com/assets/brand/logos/full.png)](https://frontendmasters.com/courses/fullstack-typescript-v2)
+## Fullstack TypeScript
 
 ## Setup Instructions
 
@@ -31,3 +28,20 @@ cd server
 npm run dev
 
 ```
+
+# NOTES
+
+## Type Guard
+
+A native TypeScript strategy for ensuring type safety and verifying the structure of objects at runtime, helping to validate that data matches expected type definitions.
+
+## Zod
+
+Zod provides an abstraction for validating object structures
+
+Simplifying complex type checking by allowing developers to define schemas that can parse and validate data with minimal code.
+
+Zod offers two parsing methods: 'parse' (which throws an error if validation fails)
+and 'safeParse' (which returns an object with a success flag and potential error details without throwing an exception).
+
+Zod allows optional type coercion, such as converting string representations of numbers or booleans into their correct types, with developers choosing to opt into these transformations.
