@@ -43,7 +43,7 @@ describe('Basic Zod (Exercises)', () => {
    */
   const optionalAgeSchema = z.object({
     name: z.string(),
-    age: z.number().positive().optional().default(0),
+    age: z.number().min(0).optional().default(0),
   });
 
   describe('Challenge 2: Optional Age', () => {
@@ -74,9 +74,17 @@ describe('Basic Zod (Exercises)', () => {
    * - Must have at least one address in the array
    *
    */
-  const addressSchema = '🥸 IMPLEMENT ME!' as any;
+  const addressSchema = z.object({
+    street: z.string(),
+    city: z.string(),
+    zip: z.string().length(5),
+    apartmentNumber: z.string().optional()
+  });
 
-  const userProfileSchema = '🥸 IMPLEMENT ME!' as any;
+  const userProfileSchema = z.object({
+    name: z.string(),
+    addresses: z.array(addressSchema).nonempty(),
+  });
 
   describe('Challenge 3: Nested Objects and Arrays', () => {
     it('should pass with one valid address', () => {
@@ -119,7 +127,14 @@ describe('Basic Zod (Exercises)', () => {
    * - Or an object { id: number, name: string }
    *
    */
-  const userIdentitySchema = '🥸 IMPLEMENT ME!' as any;
+  const anonymousSchema = z.literal("anonymous");
+  const userSchema = z.object({
+    id: z.string(),
+    namne: z.string()
+  })
+  const userIdentitySchema = z.union([anonymousSchema, userSchema]);
+
+  // type User = z.infer<typeof userIdentitySchema>;
 
   describe('Challenge 4: Union Types', () => {
     it("should accept the string 'anonymous'", () => {
