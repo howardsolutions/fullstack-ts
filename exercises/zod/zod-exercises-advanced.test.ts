@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
 
-describe.todo('Zod (Advanced Exercises)', () => {
+describe('Zod (Advanced Exercises)', () => {
   /**
    * CHALLENGE 1:
    * Lazy Recursion with z.lazy()
@@ -15,7 +15,20 @@ describe.todo('Zod (Advanced Exercises)', () => {
    *
    * Use z.lazy() to reference the schema inside itself.
    */
-  const categorySchema = '🥸 IMPLEMENT ME!' as any; // e.g., z.lazy(() => z.object({...}))
+
+
+  const categorySchema = z.lazy(() => {
+    return z.object({
+      name: z.string(),
+
+      get subcategories() {
+        return z.array(categorySchema).optional()
+      }
+    })
+  });
+
+  // type Category = z.infer<typeof categorySchema>;
+  // e.g., z.lazy(() => z.object({...}))
 
   describe('Challenge 1: Recursive Data Structures', () => {
     it('parses a valid recursive structure', () => {
@@ -42,12 +55,37 @@ describe.todo('Zod (Advanced Exercises)', () => {
    * CHALLENGE 2:
    * Preprocessing with z.preprocess() or z.superPreprocess()
    *
-   * The markdown file demonstrates parsing a JSON-like string or a prefixed string.
+   * The markdown file demonstrates parsing a JSON-like string OR a prefixed string.
    * For instance:
    *    '{ "type": "json", "data": { "value": 42 } }' -> an object
    *    'prefix-something' -> a string that starts with 'prefix-'
+   * 
+   * Piping a transform into another schema is another common pattern, so Zod provides a convenience z.preprocess() function.
+
+   * 
    */
-  const complexDataSchema = '🥸 IMPLEMENT ME!' as any;
+  const complexDataSchema = z.preprocess(
+    (input: unknown) => {
+      if (typeof input === 'string' &&
+        input.startsWith('{') && input.endsWith('}')
+      ) {
+        try {
+          return JSON.parse(input)
+        } catch (err) {
+          return input; // If parsing fails, keep it as the original string
+        }
+      }
+    },
+    z.union([
+      z.object({
+        type: z.literal('json'),
+        data: z.object({ value: z.number() })
+      }),
+      z.string().startsWith("prefix-")
+    ])
+  );
+
+  // type Complex = z.infer<typeof complexDataSchema>;
 
   describe('Challenge 2: Preprocessing', () => {
     it('accepts a valid JSON string and parses it into the correct shape', () => {

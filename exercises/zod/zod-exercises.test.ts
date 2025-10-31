@@ -313,7 +313,7 @@ describe('Basic Zod (Exercises)', () => {
     {
       message: 'Invalid hex color',
     },
-  ).brand();
+  ).brand<'HexColor'>();
 
   describe('Challenge 9: Custom (Hex Color)', () => {
     it('should pass #FFF', () => {
