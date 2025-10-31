@@ -112,11 +112,15 @@ describe('Zod (Advanced Exercises)', () => {
    * The markdown shows an async refine scenario, such as checking
    * a username against a list of "taken" usernames in a database.
    */
-  const asyncUsernameSchema = '🥸 IMPLEMENT ME!' as any;
+
+  const asyncUsernameSchema = z.string().refine(async (username) => {
+    return await checkUsernameAvailability(username)
+  });
+
   // You might create a mock function to simulate an async check, e.g.:
-  // async function checkUsernameAvailability(username: string): Promise<boolean> {
-  //   return !['takenUser', 'anotherTakenUser'].includes(username);
-  // }
+  async function checkUsernameAvailability(username: string): Promise<boolean> {
+    return !['takenUser', 'anotherTakenUser'].includes(username);
+  }
 
   describe('Challenge 3: Asynchronous Validation', () => {
     it('resolves with a valid (available) username', async () => {
@@ -159,7 +163,7 @@ describe('Zod (Advanced Exercises)', () => {
    * For example, you might want to parse numeric strings into numbers automatically
    * or parse date strings into JS Date objects, then apply further constraints.
    */
-  const coercedNumberSchema = '🥸 IMPLEMENT ME!' as any;
+  const coercedNumberSchema = z.coerce.number().min(100);
   // e.g., z.coerce.number().min(100)
 
   describe('Challenge 5: Coercion', () => {
