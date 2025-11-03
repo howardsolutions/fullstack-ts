@@ -45,3 +45,11 @@ Zod offers two parsing methods: 'parse' (which throws an error if validation fai
 and 'safeParse' (which returns an object with a success flag and potential error details without throwing an exception).
 
 Zod allows optional type coercion, such as converting string representations of numbers or booleans into their correct types, with developers choosing to opt into these transformations.
+
+## The recommended approach for type parsing and validation?
+
+Parse data at the entry points or 'gates' of the application, but avoid excessive parsing throughout the entire codebase to maintain performance. 
+
+Once data is validated, normal type safety should apply
+
+Remember the golden rule of Performance => Not doing stuff is faster than doing them.
