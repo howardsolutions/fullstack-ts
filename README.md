@@ -32,7 +32,7 @@ npm run dev
 # NOTES
 
 ## Type Guard
-    
+
 A native TypeScript strategy for ensuring type safety and verifying the structure of objects at runtime, helping to validate that data matches expected type definitions.
 
 ## Zod
@@ -48,7 +48,7 @@ Zod allows optional type coercion, such as converting string representations of 
 
 ## The recommended approach for type parsing and validation?
 
-Parse data at the entry points or 'gates' of the application, but avoid excessive parsing throughout the entire codebase to maintain performance. 
+Parse data at the entry points or 'gates' of the application, but avoid excessive parsing throughout the entire codebase to maintain performance.
 
 Once data is validated, normal type safety should apply
 
@@ -57,4 +57,36 @@ Remember the golden rule of Performance => Not doing stuff is faster than doing 
 ## the primary challenge when moving types between client and server in TypeScript?
 
 Ensuring type consistency and validation across different environments, which initially requires manual copying or type sharing strategies
+
+### What advantages does Zod provide for type validation beyond TypeScript?
+
+Zod offers runtime validation, can enforce specific constraints like email format or UUID, provides detailed error messages, and ensures type safety at both compile-time and runtime with minimal additional code.
+
+## Working Backwards from Types
+
+We know that we can create types out of Zod schemas using z.infer(), but sometimes, we find ourselves in the position where we ALREADY have the types and we want to create schemas and be 100% positive that those schemas match the types.
+
+Let’s say we have the following type:
+
+```ts
+type Task = {
+  id: string;
+  title: string;
+  description?: string;
+  completed: boolean;
+};
+```
+
+We can use `satisfies` to make sure that our schema matches.
+
+```ts
+const taskSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string(),
+  description: z.string().optional(),
+  completed: z.boolean(),
+}) satisfies z.ZodType<Task>;
+```
+
+If our schema does not match the type that it’s supposed to satisfy, then TypeScript will be the one yelling at us.
 
