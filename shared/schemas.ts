@@ -8,7 +8,8 @@ export const TaskSchema = z.object({
 });
 
 export const CreateTaskSchema = TaskSchema.omit({ id: true });
-export const UpdateTaskSchema = TaskSchema.partial();
+// want to update anything, but not the ID
+export const UpdateTaskSchema = TaskSchema.partial().omit({ id: true });
 
 export const TaskListSchema = z.array(TaskSchema);
 
