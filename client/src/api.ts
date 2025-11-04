@@ -1,5 +1,7 @@
 import { PartialTask, Task } from './types';
 
+import {} from "busy-bee-schema";
+
 const API_URL = 'http://localhost:4001';
 
 export const fetchTasks = async (showCompleted: boolean): Promise<Task[]> => {

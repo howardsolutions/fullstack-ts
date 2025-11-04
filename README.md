@@ -32,7 +32,7 @@ npm run dev
 # NOTES
 
 ## Type Guard
-
+    
 A native TypeScript strategy for ensuring type safety and verifying the structure of objects at runtime, helping to validate that data matches expected type definitions.
 
 ## Zod
@@ -53,3 +53,8 @@ Parse data at the entry points or 'gates' of the application, but avoid excessiv
 Once data is validated, normal type safety should apply
 
 Remember the golden rule of Performance => Not doing stuff is faster than doing them.
+
+## the primary challenge when moving types between client and server in TypeScript?
+
+Ensuring type consistency and validation across different environments, which initially requires manual copying or type sharing strategies
+
