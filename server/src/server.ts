@@ -1,9 +1,9 @@
 import cors from 'cors';
-import express from 'express';
+import express, { RequestHandler } from 'express';
 import type { Database } from 'sqlite';
 import { handleError } from './handle-error.js';
 import { z } from 'zod';
-import { CreateTaskSchema, TaskSchema, UpdateTaskSchema } from 'busy-bee-schema';
+import { CreateTask, CreateTaskSchema, TaskSchema, UpdateTaskSchema } from 'busy-bee-schema';
 
 export async function createServer(database: Database) {
   const app = express();
@@ -19,7 +19,17 @@ export async function createServer(database: Database) {
     `UPDATE tasks SET title = ?, description = ?, completed = ? WHERE id = ?`,
   );
 
-  app.get('/tasks', async (req, res) => {    
+  const validateCreateTask: RequestHandler<{}, unknown, CreateTask> = (req, res, next) => {
+    try {
+      const validateBody = CreateTaskSchema.parse(req.body);
+
+      next();
+    } catch (err) {
+      return handleError(err)
+    }
+  }
+
+  app.get('/tasks', async (req, res) => {
     const { completed } = req.query;
     const query = completed === 'true' ? completedTasks : incompleteTasks;
 
@@ -45,7 +55,7 @@ export async function createServer(database: Database) {
     }
   });
 
-  app.post('/tasks', async (req, res) => {
+  app.post('/tasks', validateCreateTask, async (req, res) => {
     try {
       const task = CreateTaskSchema.parse(req.body);
       if (!task.title) return res.status(400).json({ message: 'Title is required' });
@@ -60,14 +70,14 @@ export async function createServer(database: Database) {
   // Update a task
   app.put('/tasks/:id', async (req, res) => {
     try {
-      const { id } = z.object({id: z.coerce.number()}).parse(req.params);
+      const { id } = z.object({ id: z.coerce.number() }).parse(req.params);
 
       const previous = TaskSchema.parse(await getTask.get([id]));
       const updates = UpdateTaskSchema.parse(req.body);
       const task = { ...previous, ...updates };
 
       await updateTask.run([task.title, task.description, task.completed, id]);
-      return res.status(200).json({message: 'Task updated successfully'});
+      return res.status(200).json({ message: 'Task updated successfully' });
     } catch (error) {
       return handleError(req, res, error);
     }
