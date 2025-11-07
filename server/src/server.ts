@@ -1,6 +1,6 @@
 import { CreateTaskSchema, TaskSchema, UpdateTaskSchema } from 'busy-bee-schema';
 import cors from 'cors';
-import express, { RequestHandler } from 'express';
+import express, { Request, RequestHandler } from 'express';
 import type { Database } from 'sqlite';
 import { z, ZodSchema } from 'zod';
 import { handleError } from './handle-error.js';
@@ -19,6 +19,16 @@ export async function createServer(database: Database) {
     `UPDATE tasks SET title = ?, description = ?, completed = ? WHERE id = ?`,
   );
 
+  const validateParams = <T>(schema: ZodSchema<T>): RequestHandler<T> => (req, res, next) => {
+    try {
+      schema.parse(req.params);
+
+      next();
+    } catch (err) {
+      return handleError(req, res, err)
+    }
+  }
+
   const validateBody = <T>(schema: ZodSchema<T>): RequestHandler<NonNullable<unknown>, unknown, T> => (req, res, next) => {
     try {
       schema.parse(req.body)
@@ -29,9 +39,23 @@ export async function createServer(database: Database) {
     }
   }
 
-  app.get('/tasks', async (req, res) => {
+  type Query = Request['query'];
+
+  const FilterTaskSchema = TaskSchema.pick({ completed: true }).partial()
+
+  const validateQuery = <T>(schema: ZodSchema<T>): RequestHandler<NonNullable<unknown>, unknown, unknown, Query & T> => (req, res, next) => {
+    try {
+      schema.parse(req.query)
+
+      next();
+    } catch (err) {
+      return handleError(req, res, err)
+    }
+  }
+
+  app.get('/tasks', validateQuery(FilterTaskSchema), async (req, res) => {
     const { completed } = req.query;
-    const query = completed === 'true' ? completedTasks : incompleteTasks;
+    const query = completed ? completedTasks : incompleteTasks;
 
     try {
       const tasks = await query.all();
@@ -42,7 +66,7 @@ export async function createServer(database: Database) {
   });
 
   // Get a specific task
-  app.get('/tasks/:id', async (req, res) => {
+  app.get('/tasks/:id', validateParams(TaskSchema.pick({ id: true })), async (req, res) => {
     try {
       const { id } = req.params;
       const task = await getTask.get([id]);
