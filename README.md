@@ -111,3 +111,21 @@ This process can automatically create type-safe schemas that match the API contr
 ## What are the advantages of generating API clients and schemas automatically?
 
 Automatically generated API clients and schemas provide more accuracy, reduce manual work, ensure type safety, minimize human error, and create consistent type definitions across frontend and backend development.
+
+# TRPC
+
+## What is the core concept behind RPC (Remote Procedure Call)?
+
+The ability to call functions remotely on a server as if they were local functions, with the transport details handled automatically
+
+## What is the 'Backend for Frontend' pattern primarily used for?
+
+To create an abstraction layer over legacy or complex backend APIs
+
+allowing easier integration and reducing complexity for frontend developers
+
+## What advantage does tRPC provide in terms of type safety and contract definition?
+
+It allows developers to define `API contracts using TypeScript types`
+
+which can be used both for implementation and type generation on the client side
