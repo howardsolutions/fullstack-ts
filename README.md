@@ -90,3 +90,24 @@ const taskSchema = z.object({
 
 If our schema does not match the type that it’s supposed to satisfy, then TypeScript will be the one yelling at us.
 
+### What type complexity exists with Express query parameters?
+
+Query parameters can be a string, an array of strings, an object with key sets of strings, or undefined, which makes type validation complex
+
+## What benefits does using an API contract provide for frontend and backend development?
+
+An API contract enables type-safe client generation, automatic validation of requests and responses, ensures CONSISTENCY between frontend and backend, and reduces the likelihood of errors by providing shared type definitions and validation.
+
+## What is the purpose of Mock Service Worker (MSW) in API development?
+
+Mock Service Worker allows developers to stub out API responses based on the API contract when the backend is not yet complete. It can hijack network requests, generate fake API responses, and can be removed once the actual API is ready.
+
+## How can Zod schemas be generated from an OpenAPI specification?
+
+Using specific libraries, developers can generate Zod schemas directly from an OpenAPI specification. 
+
+This process can automatically create type-safe schemas that match the API contract, reducing manual schema creation and potential errors
+
+## What are the advantages of generating API clients and schemas automatically?
+
+Automatically generated API clients and schemas provide more accuracy, reduce manual work, ensure type safety, minimize human error, and create consistent type definitions across frontend and backend development.
