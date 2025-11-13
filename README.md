@@ -129,3 +129,7 @@ allowing easier integration and reducing complexity for frontend developers
 It allows developers to define `API contracts using TypeScript types`
 
 which can be used both for implementation and type generation on the client side
+
+## What is the primary goal of the TRPC approach to defining server functions?
+
+To make calling server code from the client feel like calling a local function, with full type safety and automatic validation
