@@ -6,13 +6,16 @@ import { z, ZodSchema } from 'zod';
 import { handleError } from './handle-error.js';
 
 // TRPC
-import { initTRPC } from '@trpc/server';
 import { TaskClient } from './client.js';
+import { createTRPCRouter } from './trpc/trpc-adapter.js';
 
 export async function createServer(database: Database) {
   const app = express();
   app.use(cors());
   app.use(express.json());
+
+  // trpc integration
+  app.use('/api', createTRPCRouter())
 
   const getTask = await database.prepare('SELECT * FROM tasks WHERE id = ?');
   const createTask = await database.prepare('INSERT INTO tasks (title, description) VALUES (?, ?)');
@@ -61,7 +64,7 @@ export async function createServer(database: Database) {
     const { completed } = req.query;
 
     try {
-      const tasks = await client.getAllTasks(!completed);
+      const tasks = await client.getAllTasks({ completed: !!completed });
       return res.json(tasks);
     } catch (error) {
       return handleError(req, res, error);
