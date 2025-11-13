@@ -5,13 +5,15 @@ import type { Database } from 'sqlite';
 import { z, ZodSchema } from 'zod';
 import { handleError } from './handle-error.js';
 
+// TRPC
+import { initTRPC } from '@trpc/server';
+import { TaskClient } from './client.js';
+
 export async function createServer(database: Database) {
   const app = express();
   app.use(cors());
   app.use(express.json());
 
-  const incompleteTasks = await database.prepare('SELECT * FROM tasks whERE completed = 0');
-  const completedTasks = await database.prepare('SELECT * FROM tasks WHERE completed = 1');
   const getTask = await database.prepare('SELECT * FROM tasks WHERE id = ?');
   const createTask = await database.prepare('INSERT INTO tasks (title, description) VALUES (?, ?)');
   const deleteTask = await database.prepare('DELETE FROM tasks WHERE id = ?');
@@ -41,6 +43,8 @@ export async function createServer(database: Database) {
 
   type Query = Request['query'];
 
+  const client = new TaskClient(database);
+
   const FilterTaskSchema = TaskSchema.pick({ completed: true }).partial()
 
   const validateQuery = <T>(schema: ZodSchema<T>): RequestHandler<NonNullable<unknown>, unknown, unknown, Query & T> => (req, res, next) => {
@@ -55,10 +59,9 @@ export async function createServer(database: Database) {
 
   app.get('/tasks', validateQuery(FilterTaskSchema), async (req, res) => {
     const { completed } = req.query;
-    const query = completed ? completedTasks : incompleteTasks;
 
     try {
-      const tasks = await query.all();
+      const tasks = await client.getAllTasks(!completed);
       return res.json(tasks);
     } catch (error) {
       return handleError(req, res, error);
