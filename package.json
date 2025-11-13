@@ -6,5 +6,8 @@
     "client",
     "exercises",
     "shared"
-  ]
+  ],
+  "dependencies": {
+    "@trpc/client": "^11.7.1"
+  }
 }
